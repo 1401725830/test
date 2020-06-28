@@ -1,0 +1,128 @@
+server:
+  # session最大超时时间(分钟)，默认为30
+  session-timeout: 30
+  tomcat:
+    # tomcat最大线程数，默认为200
+    max-threads: 1000
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+
+management:
+  security:
+    enabled: false
+
+security:
+  basic:
+   enabled: false
+  user:
+    name: admin
+    password: admin
+
+eureka:
+  instance:
+    hostname: ${spring.cloud.client.ipAddress}
+    prefer-ip-address: true
+    #生产环境打开自我保护模式 st
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 15
+    #生产环境打开自我保护模式 ed
+  client:
+    healthcheck:
+      enabled: true
+    service-url:
+      defaultZone: http://admin:${REGISTRY_SERVER_PASSWORD:admin}@RegistryService:8001/eureka/
+
+hystrix:
+  threadpool:
+    default:
+      coreSize: 500 #缺省为10
+      maximumSize: 1000
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: true
+        isolation:
+          thread:
+            timeoutInMilliseconds: 180000 #缺省为1000
+
+#开启hystrix(要不然降级失败)
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 30000
+        readTimeout: 60000
+        loggerLevel: full
+
+ribbon:
+  eager-load:
+    enabled: true
+  ConnectTimeout: 30000
+  ReadTimeout: 60000
+  MaxAutoRetries: 0
+
+spring:
+  http:
+    encoding:
+      enabled: true
+      force: true
+      charset: UTF-8
+  cloud:
+    inetutils:
+      use-only-site-local-interfaces: true
+      preferred-networks: 192.168
+  redis:
+    database: 0
+    host: RedisService
+    port: 6379
+    password:
+    # 连接超时时间（毫秒）
+    timeout: 0
+    commandTimeout: 5000
+    pool:
+      # 连接池最大连接数（使用负值表示没有限制）
+      max-active: 8
+      # 连接池最大阻塞等待时间（使用负值表示没有限制）
+      max-wait: -1
+      # 连接池中的最大空闲连接
+      max-idle: 8
+      # 连接池中的最小空闲连接
+      min-idle: 0
+
+  rabbitmq:
+    host: RabbitMQService
+    port: 5672
+    username: rabbitadmin
+    password: 123456
+    #支持发布确认
+    publisher-confirms: true
+    #支持发布返回
+    publisher-returns: true
+
+#  zipkin:
+#    rabbitmq:
+#      queue: zipkin
+#    aop:
+#      proxy-target-class: true
+    
+  sleuth:
+    sampler:
+      percentage: 1
+    integration:
+      enabled: false
+    scheduled:
+      skip-pattern: "^org.*HystrixStreamTask$"
+
+  messages:
+    basename: i18n/messages
+    cacheSeconds: 3600
+
+swagger:
+    service:
+        defaultToken: 5DB89E7472F81A4EA6B7A73F7C6729F1
+        name: 大数据安全治理系统
+        description: 大数据安全治理系统
+        version: v1.0
